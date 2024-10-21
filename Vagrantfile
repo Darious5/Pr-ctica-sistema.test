@@ -24,6 +24,23 @@ SHELL
     tierra.vm.box = "debian/buster64"
     tierra.vm.hostname = "tierra.sistema.test"
     tierra.vm.network "private_network", ip: "192.168.57.103"
+#esta linea manda los files a la carpeta temporal de la maquina, no a la correcta, asi que tendremos que moverlos ahora
+    tierra.vm.provision "file", source: "./dnsfiles/named.conf.options", destination: "/tmp/named.conf.options"
+    tierra.vm.provision "file", source: "./dnsfiles/named.conf.local.master", destination: "/tmp/named.conf.local"
+    tierra.vm.provision "file", source: "./dnsfiles/db.sistema.test", destination: "/tmp/db.sistema.test"
+    tierra.vm.provision "file", source: "./dnsfiles/db.57.168.192.in-addr.arpa", destination: "/tmp/db.57.168.192.in-addr.arpa"
+#movemos los archivos a donde corresponden
+    tierra.vm.provision "shell", inline: <<-SHELL
+      apt-get update
+      apt-get install -y bind9 bind9utils bind9-doc
+
+      mv /tmp/named.conf.options /etc/bind/named.conf.options
+      mv /tmp/named.conf.local /etc/bind/named.conf.local
+      mv /tmp/db.sistema.test /etc/bind/db.sistema.test
+      mv /tmp/db.57.168.192.in-addr.arpa /etc/bind/db.57.168.192.in-addr.arpa
+
+      systemctl restart bind9
+    SHELL
   end
 
 #configuracion del slave
@@ -31,6 +48,19 @@ SHELL
     venus.vm.box = "debian/buster64"
     venus.vm.hostname = "venus.sistema.test"
     venus.vm.network "private_network", ip: "192.168.57.102"
+#esta linea manda los files a la carpeta temporal de la maquina, no a la correcta, asi que tendremos que moverlos ahora
+    venus.vm.provision "file", source: "./dnsfiles/named.conf.options", destination: "/tmp/named.conf.options"
+    venus.vm.provision "file", source: "./dnsfiles/named.conf.local.slave", destination: "/tmp/named.conf.local"
+#movemos los archivos a donde corresponden
+    venus.vm.provision "shell", inline: <<-SHELL
+      apt-get update
+      apt-get install -y bind9 bind9utils bind9-doc
+
+      mv /tmp/named.conf.options /etc/bind/named.conf.options
+      mv /tmp/named.conf.local /etc/bind/named.conf.local
+
+      systemctl restart bind9
+    SHELL
   end
 #no vamos a crear las que en el trabajo se han puesto explicitamente como imaginarias
   # Disable automatic box update checking. If you disable this, then
