@@ -1,0 +1,11 @@
+zone "sistema.test" {
+    type master;
+    file "/etc/bind/db.sistema.test";
+    allow-transfer { 192.168.57.102; };  # Permitir transferencias al esclavo
+};
+
+zone "57.168.192.in-addr.arpa" { 
+    type master;
+    file "/etc/bind/db.57.168.192.in-addr.arpa";
+    allow-transfer { 192.168.57.102; };
+};
