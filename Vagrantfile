@@ -19,14 +19,20 @@ Vagrant.configure("2") do |config|
   apt-get install -y bind9 dnsutils
 SHELL
 
-  config.vm.define "master" do |master|
-    master.vm.network "private_network", ip:"192.168.57.10"
+#configuracion del master
+  config.vm.define "tierra" do |tierra|
+    tierra.vm.box = "debian/buster64"
+    tierra.vm.hostname = "tierra.sistema.test"
+    tierra.vm.network "private_network", ip: "192.168.57.103"
   end
 
-  config.vm.define "slave" do |slave|
-    slave.vm.network "private_network", ip:"192.168.57.11"
+#configuracion del slave
+  config.vm.define "venus" do |venus|
+    venus.vm.box = "debian/buster64"
+    venus.vm.hostname = "venus.sistema.test"
+    venus.vm.network "private_network", ip: "192.168.57.102"
   end
-
+#no vamos a crear las que en el trabajo se han puesto explicitamente como imaginarias
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
